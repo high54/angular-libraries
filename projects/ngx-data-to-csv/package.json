@@ -1,6 +1,6 @@
 {
   "name": "ngx-data-to-csv",
-  "version": "1.0.0",
+  "version": "1.0.6",
   "schematics": "./schematics/collection.json",
   "scripts": {
     "build": "tsc -p tsconfig.schematics.json",
@@ -20,5 +20,18 @@
     "copyfiles": "file:../../node_modules/copyfiles",
     "typescript": "file:../../node_modules/typescript"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "keywords": [
+    "Angular",
+    "Ngx Data To CSV",
+    "CSV export",
+    "Data transformation",
+    "Angular service",
+    "Downloadable CSV",
+    "NPM package",
+    "JSON to CSV conversion",
+    "Configurable CSV options",
+    "Angular CLI",
+    "Data export"
+  ]
 }

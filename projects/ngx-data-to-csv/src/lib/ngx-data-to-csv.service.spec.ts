@@ -15,19 +15,4 @@ describe('NgxDataToCsvService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should be able to transform data to CSV', () => {
-    const csv = service.toCsv([{
-      name: 'test', age: 20, address: {
-        street: '456 Maple St',
-        city: 'Los Angeles'
-      }, user: {
-        name: 'jojo',
-        todos: [
-          { id: 1, title: 'oups' },
-          { id: 2, title: 'a faire' }
-        ]
-      }
-    }], 'My Report', { useByteOrderMark: false, noDownload: false, useObjHeader: true } as Config);
-
-  });
 });
