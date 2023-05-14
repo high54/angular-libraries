@@ -1,6 +1,6 @@
 {
   "name": "ngx-data-to-csv",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "schematics": "./schematics/collection.json",
   "scripts": {
     "build": "tsc -p tsconfig.schematics.json",
@@ -21,6 +21,17 @@
     "typescript": "file:../../node_modules/typescript"
   },
   "sideEffects": false,
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/high54/angular-libraries/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/high54/angular-libraries.git"
+  },
+  "author": {
+    "name": "Julien Bertacco"
+  },
   "keywords": [
     "Angular",
     "Ngx Data To CSV",
