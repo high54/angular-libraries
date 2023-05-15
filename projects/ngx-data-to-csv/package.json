@@ -1,6 +1,6 @@
 {
   "name": "ngx-data-to-csv",
-  "version": "1.0.7",
+  "version": "1.0.9",
   "schematics": "./schematics/collection.json",
   "scripts": {
     "build": "tsc -p tsconfig.schematics.json",

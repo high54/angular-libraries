@@ -1,5 +1,9 @@
 # Ngx Data To CSV Documentation
 
+Ngx Data To CSV is an Angular library that provides a service to transform data into CSV format. It offers a set of methods for converting data (in the form of an object or a JSON string) into CSV format, extracting values from nested objects, extracting unique keys from an array of objects, parsing a JSON string into an object, formatting cell values for inclusion in a CSV file, and initiating the download of a CSV file.
+
+The library is designed to handle various complexities that arise when dealing with data structures, including nested objects and arrays. It automates the process of generating CSV files, allowing developers to focus on their data processing logic rather than worrying about the intricacies of CSV formatting.
+
 ## Installation
 
 To install the Ngx Data To CSV package, use the following command in your console:
@@ -20,13 +24,18 @@ To use this service, you need to import and inject it into your Angular componen
 1. Import `NgxDataToCsvService` into your component:
 
 ```ts
-import { NgxDataToCsvService } from 'path/to/ngx-data-to-csv';
+import { NgxDataToCsvService } from 'ngx-data-to-csv';
 ```
 
 2. Inject the service into the constructor of your component:
 
 ```ts
 constructor(private csvService: NgxDataToCsvService) {}
+```
+or 
+
+```ts
+csvService: NgxDataToCsvService = inject(NgxDataToCsvService);
 ```
 
 3. Use the `toCsv(data, filename, config?)` method to transform your data into CSV. This method takes three arguments:
