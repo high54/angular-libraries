@@ -4,7 +4,9 @@ import { Config, ConfigDefaults, CsvConfigConsts } from './model';
 type GenericObject = {
   [key: string]: bigint | boolean | null | number | string;
 };
-
+interface DataObject {
+  [key: string]: string | number | boolean | null;
+}
 /**
  * 
  * # Ngx Data To CSV
@@ -68,7 +70,7 @@ export class NgxDataToCsvService {
    *
    * @returns {string | void} - If noDownload is set to true in the config, returns the CSV as a string. Otherwise, triggers a download of the CSV file and returns void.
    */
-  public toCsv(dataToTransform: any, filename: string, config?: Config): string | void {
+  public toCsv(dataToTransform: DataObject[], filename: string, config?: Config): string | void {
     this.csv = '';
 
     this.data = typeof dataToTransform != 'object' ? this.parseJson(dataToTransform) : dataToTransform;
@@ -81,28 +83,20 @@ export class NgxDataToCsvService {
       this.options.filename = filename;
     }
 
-    if (this.options?.useByteOrderMark) {
-      this.csv += CsvConfigConsts.ByteOrderMark;
-    }
-
-    if (this.options?.showTitle) {
-      this.csv += this.options?.title + '\r\n\n';
-    }
+    this.addByteOrderMarkAndTitle();
 
     const keys = this.extractUniqueKeys(this.data);
-    const csvData = [];
 
-    csvData.push(keys.join(this.options.fieldSeparator)); // CSV header
+    // Add CSV header directly to the CSV string
+    this.generateCsvHeader(keys);
 
+    // Process each row individually and add it to the CSV string
     for (const obj of this.data) {
-      const row = keys.map(key => this.formatCellValue(obj, key));
-      csvData.push(row.join(this.options.fieldSeparator));
+      this.generateCsvRow(obj, keys);
     }
-    this.csv += csvData.join(CsvConfigConsts.END_OF_LINE);
 
     if (this.csv == '') {
-      console.log("Invalid data");
-      return;
+      throw new Error("Invalid data");
     }
 
     if (this.options?.noDownload) {
@@ -190,10 +184,10 @@ export class NgxDataToCsvService {
       if (typeof parsedData === 'object' && parsedData !== null) {
         return parsedData;
       }
-    } catch (error) {
-      console.log('Invalid JSON:', error);
+      throw new Error('Parsed data is not an object or is null');
+    } catch (error: any) {
+      throw new Error(`Invalid JSON: ${error.message}`);
     }
-    return null;
   }
   /**
    * This method formats a cell value for inclusion in a CSV.
@@ -213,8 +207,12 @@ export class NgxDataToCsvService {
     if (typeof value === 'object' && value !== null) {
       value = JSON.stringify(value);
     }
-    const strValue = String(value).replace(/"/g, '""');
-    return `"${strValue}"`;
+
+    const strValue = String(value);
+    // Only do the replacement if necessary
+    const finalValue = strValue.includes('"') ? strValue.replace(/"/g, '""') : strValue;
+
+    return `"${finalValue}"`;
   }
 
   /**
@@ -240,4 +238,58 @@ export class NgxDataToCsvService {
     link.click();
     document.body.removeChild(link);
   }
+
+  /**
+   * Adds the Byte Order Mark and title to the CSV string if specified in the options.
+   *
+   * The Byte Order Mark (BOM) is a Unicode character used to signal the endianness 
+   * (byte order) of a text. It's optional and not all CSV parsers require or understand it.
+   *
+   * The title is a user-defined string that will be placed at the top of the CSV file,
+   * separated from the rest of the data by two newline characters.
+   */
+  private addByteOrderMarkAndTitle() {
+    if (this.options?.useByteOrderMark) {
+      this.csv += CsvConfigConsts.ByteOrderMark;
+    }
+
+    if (this.options?.showTitle) {
+      this.csv += this.options?.title + '\r\n\n';
+    }
+  }
+
+
+  /**
+   * Generates the CSV header row and appends it to the CSV string.
+   * 
+   * This method takes an array of keys, which represent the column headers in the CSV file,
+   * and joins them together into a single string with the field separator defined in the options.
+   * The field separator is typically a comma (,), but it could be any character.
+   * 
+   * After joining the keys, an end of line marker is appended to complete the header row.
+   *
+   * @param keys An array of strings representing the column headers for the CSV file.
+   */
+  private generateCsvHeader(keys: string[]) {
+    this.csv += keys.join(this.options.fieldSeparator) + CsvConfigConsts.END_OF_LINE;
+  }
+
+  /**
+   * Generates a CSV row from a given object and appends it to the CSV string.
+   *
+   * This method takes an object and an array of keys. The keys represent the fields
+   * of the object that will be included in the CSV row. For each key, it retrieves 
+   * the corresponding value from the object, formats it using the `formatCellValue` method,
+   * and then joins these formatted values into a single string with the field separator defined in the options.
+   *
+   * After joining the values, an end of line marker is appended to complete the row.
+   *
+   * @param obj The object to convert into a CSV row.
+   * @param keys An array of strings representing the fields of the object to include in the CSV row.
+   */
+  private generateCsvRow(obj: GenericObject, keys: string[]) {
+    const row = keys.map(key => this.formatCellValue(obj, key));
+    this.csv += row.join(this.options.fieldSeparator) + CsvConfigConsts.END_OF_LINE;
+  }
+
 }
